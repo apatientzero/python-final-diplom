@@ -113,3 +113,59 @@ class ProductInfo(models.Model):
 
     def __str__(self):
         return f"{self.product} — {self.shop}"
+
+
+class Parameter(models.Model):
+    """Название характеристики, общее для разных товаров."""
+
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductParameter(models.Model):
+    """Значение характеристики из прайса поставщика."""
+
+    product_info = models.ForeignKey(
+        ProductInfo,
+        on_delete=models.CASCADE,
+        related_name="product_parameters",
+    )
+    parameter = models.ForeignKey(
+        Parameter,
+        on_delete=models.PROTECT,
+        related_name="product_parameters",
+    )
+    value = models.TextField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["product_info", "parameter"],
+                name="unique_product_info_parameter",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.parameter}: {self.value}"
+
+
+class Contact(models.Model):
+    """Адрес доставки и контактный телефон пользователя."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="contacts",
+    )
+    city = models.CharField(max_length=75)
+    street = models.CharField(max_length=100)
+    house = models.CharField(max_length=15)
+    structure = models.CharField(max_length=15, blank=True)
+    building = models.CharField(max_length=15, blank=True)
+    apartment = models.CharField(max_length=15, blank=True)
+    phone = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.city}, {self.street}, д. {self.house}"
