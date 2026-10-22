@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 
 from .managers import UserManager
 
@@ -31,3 +32,84 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Shop(models.Model):
+    """Поставщик товаров и состояние приёма заказов."""
+
+    name = models.CharField(max_length=100)
+    url = models.URLField(blank=True)
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="shop",
+    )
+
+    state = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
+    """Категория товаров, представленная у поставщиков."""
+
+    name = models.CharField(max_length=100)
+    shops = models.ManyToManyField(
+        Shop,
+        related_name="categories",
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Product(models.Model):
+    """Товар общего каталога."""
+
+    name = models.CharField(max_length=255)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        related_name="products",
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class ProductInfo(models.Model):
+    """Предложение поставщика: товар, цена и остаток."""
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name="product_infos",
+    )
+    shop = models.ForeignKey(
+        Shop,
+        on_delete=models.PROTECT,
+        related_name="product_infos",
+    )
+    external_id = models.PositiveBigIntegerField()
+    model = models.CharField(max_length=100, blank=True)
+    quantity = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    price_rrc = models.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["shop", "external_id"],
+                name="unique_shop_external_id",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(price__gte=0, price_rrc__gte=0),
+                name="product_info_prices_nonnegative",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.product} — {self.shop}"
