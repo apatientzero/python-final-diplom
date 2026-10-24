@@ -1,0 +1,393 @@
+# Современный каталог ноутбуков, моноблоков и мониторов
+# Дата обновления: 24 октября 2026 г.
+
+catalog:
+  metadata:
+    title: "Глобальный каталог компьютерной техники 2026"
+    version: "4.0"
+    last_updated: "2026-10-24"
+    default_currency: "USD"
+    total_items: 21
+
+  # ==================== НОУТБУКИ ====================
+  laptops:
+    - id: "APL-MBA-M4-13"
+      brand: "Apple"
+      model: "MacBook Air 13 (M4)"
+      category: "Ultrabook"
+      os: "macOS Sequoia"
+      release_year: 2025
+      specs:
+        cpu: "Apple M4 (10-core CPU, 10-core GPU)"
+        ram_gb: 16
+        ram_type: "Unified Memory"
+        storage_gb: 512
+        display: "13.6-inch Liquid Retina, 500 nits"
+        battery_life_hours: 18
+        weight_kg: 1.24
+      price: 1099
+      in_stock: true
+      tags: ["тонкий", "легкий", "для учебы", "офис"]
+
+    - id: "APL-MBP-M4PRO-14"
+      brand: "Apple"
+      model: "MacBook Pro 14 (M4 Pro)"
+      category: "Professional"
+      os: "macOS Sequoia"
+      release_year: 2025
+      specs:
+        cpu: "Apple M4 Pro (12-core CPU, 16-core GPU)"
+        ram_gb: 24
+        ram_type: "Unified Memory"
+        storage_gb: 1024
+        display: "14.2-inch Liquid Retina XDR, 120Hz ProMotion"
+        battery_life_hours: 22
+        weight_kg: 1.55
+      price: 1999
+      in_stock: true
+      tags: ["профессиональный", "видеомонтаж", "разработка", "xdr"]
+
+    - id: "DEL-XPS14-9440"
+      brand: "Dell"
+      model: "XPS 14 (9440)"
+      category: "Premium Ultrabook"
+      os: "Windows 11 Pro"
+      release_year: 2025
+      specs:
+        cpu: "Intel Core Ultra 7 155H"
+        ram_gb: 32
+        ram_type: "LPDDR5x"
+        storage_gb: 1024
+        gpu: "NVIDIA GeForce RTX 4050 Laptop"
+        display: "14.5-inch 3.2K (3200x2000) OLED, 400 nits"
+        battery_life_hours: 14
+        weight_kg: 1.68
+      price: 1799
+      in_stock: true
+      tags: ["премиум", "oled", "дизайн", "создание контента"]
+
+    - id: "LEN-X1C-G12"
+      brand: "Lenovo"
+      model: "ThinkPad X1 Carbon Gen 12"
+      category: "Business"
+      os: "Windows 11 Pro"
+      release_year: 2025
+      specs:
+        cpu: "Intel Core Ultra 7 155U"
+        ram_gb: 32
+        ram_type: "LPDDR5x"
+        storage_gb: 1024
+        display: "14-inch 2.8K OLED, 400 nits"
+        battery_life_hours: 15
+        weight_kg: 1.08
+      price: 1850
+      in_stock: true
+      tags: ["бизнес", "корпоративный", "надежный", "ультралегкий"]
+
+    - id: "LEN-LEGION-7I"
+      brand: "Lenovo"
+      model: "Legion Pro 7i (Gen 9)"
+      category: "Gaming"
+      os: "Windows 11 Home"
+      release_year: 2026
+      specs:
+        cpu: "Intel Core i9-14900HX"
+        ram_gb: 32
+        ram_type: "DDR5"
+        storage_gb: 2048
+        gpu: "NVIDIA GeForce RTX 5080 (16GB GDDR7)"
+        display: "16-inch WQXGA (2560x1600) IPS, 240Hz"
+        battery_life_hours: 6
+        weight_kg: 2.80
+      price: 2899
+      in_stock: true
+      tags: ["игровой", "топ", "rtx50", "киберспорт"]
+
+    - id: "ASUS-ZEPHYRUS-G14"
+      brand: "ASUS"
+      model: "ROG Zephyrus G14 (2026)"
+      category: "Gaming / Creator"
+      os: "Windows 11 Home"
+      release_year: 2026
+      specs:
+        cpu: "AMD Ryzen 9 9945HX"
+        ram_gb: 32
+        ram_type: "DDR5"
+        storage_gb: 2048
+        gpu: "NVIDIA GeForce RTX 5070 (8GB GDDR7)"
+        display: "14-inch 3K (2880x1800) OLED, 120Hz"
+        battery_life_hours: 9
+        weight_kg: 1.50
+      price: 2299
+      in_stock: false
+      tags: ["компактный игровой", "oled", "универсальный"]
+
+    - id: "MS-SURFACE-L7"
+      brand: "Microsoft"
+      model: "Surface Laptop 7 (13.8 inch)"
+      category: "Copilot+ PC"
+      os: "Windows 11 Home"
+      release_year: 2025
+      specs:
+        cpu: "Snapdragon X Elite (12-core)"
+        ram_gb: 16
+        ram_type: "LPDDR5x"
+        storage_gb: 512
+        display: "13.8-inch PixelSense Flow, 120Hz"
+        battery_life_hours: 20
+        weight_kg: 1.34
+      price: 1499
+      in_stock: true
+      tags: ["copilot+", "arm", "автономность", "сенсорный"]
+
+    - id: "HP-SPECTRE-X360"
+      brand: "HP"
+      model: "Spectre x360 14 (2026)"
+      category: "2-in-1 Convertible"
+      os: "Windows 11 Home"
+      release_year: 2026
+      specs:
+        cpu: "Intel Core Ultra 7 258V"
+        ram_gb: 32
+        ram_type: "LPDDR5x"
+        storage_gb: 1024
+        display: "14-inch 2.8K OLED, Touch, 2-in-1"
+        battery_life_hours: 17
+        weight_kg: 1.43
+      price: 1699
+      in_stock: true
+      tags: ["трансформер", "сенсорный", "стильный", "для презентаций"]
+
+  # ==================== МОНОБЛОКИ ====================
+  all_in_ones:
+    - id: "APL-IMAC-M4-24"
+      brand: "Apple"
+      model: "iMac 24-inch (M4)"
+      category: "Consumer All-in-One"
+      os: "macOS Sequoia"
+      release_year: 2025
+      specs:
+        cpu: "Apple M4 (10-core CPU, 10-core GPU)"
+        ram_gb: 16
+        ram_type: "Unified Memory"
+        storage_gb: 512
+        display: "24-inch 4.5K Retina, P3, 500 nits"
+        speakers: "Six-speaker system with Force-cancelling woofers"
+        ports: ["Thunderbolt 4 x2", "USB-C x2", "3.5mm jack", "Gigabit Ethernet"]
+        weight_kg: 4.46
+      price: 1399
+      in_stock: true
+      tags: ["семейный", "дизайн", "4.5k", "для дома"]
+
+    - id: "APL-IMAC-M4PRO-32"
+      brand: "Apple"
+      model: "iMac 32-inch (M4 Pro)"
+      category: "Pro All-in-One"
+      os: "macOS Sequoia"
+      release_year: 2026
+      specs:
+        cpu: "Apple M4 Pro (14-core CPU, 20-core GPU)"
+        ram_gb: 48
+        ram_type: "Unified Memory"
+        storage_gb: 2048
+        display: "32-inch 6K Retina, XDR, 1600 nits peak, 120Hz ProMotion"
+        speakers: "Eight-speaker system with Spatial Audio"
+        ports: ["Thunderbolt 5 x3", "USB-C x2", "SD-card", "Gigabit Ethernet"]
+        weight_kg: 8.90
+      price: 3499
+      in_stock: true
+      tags: ["профессиональный", "6k", "xdr", "студия", "монтаж"]
+
+    - id: "HP-ENVY-34"
+      brand: "HP"
+      model: "Envy 34 All-in-One (2026)"
+      category: "Premium All-in-One"
+      os: "Windows 11 Home"
+      release_year: 2026
+      specs:
+        cpu: "Intel Core Ultra 9 285K"
+        ram_gb: 64
+        ram_type: "DDR5"
+        storage_gb: 2048
+        gpu: "NVIDIA GeForce RTX 5070 (8GB GDDR7)"
+        display: "34-inch WUHD (3440x1440) IPS, Touch, 500 nits"
+        ports: ["Thunderbolt 4 x2", "USB-A x3", "HDMI-in", "SD-card"]
+        weight_kg: 12.50
+      price: 2499
+      in_stock: true
+      tags: ["ультраширокий", "сенсорный", "мультимедиа", "премиум"]
+
+    - id: "LEN-YOGA-AIO7"
+      brand: "Lenovo"
+      model: "Yoga AIO 7 (27-inch)"
+      category: "Stylish All-in-One"
+      os: "Windows 11 Home"
+      release_year: 2026
+      specs:
+        cpu: "AMD Ryzen 9 9940HS"
+        ram_gb: 32
+        ram_type: "LPDDR5x"
+        storage_gb: 1024
+        display: "27-inch 4K (3840x2160) OLED, 100% DCI-P3"
+        ports: ["USB-C x2", "USB-A x3", "HDMI", "SD-card"]
+        weight_kg: 7.80
+      price: 1899
+      in_stock: true
+      tags: ["стильный", "4k", "oled", "для дома"]
+
+    - id: "DEL-OPTIPLEX-AIO"
+      brand: "Dell"
+      model: "OptiPlex All-in-One 27 (2026)"
+      category: "Business All-in-One"
+      os: "Windows 11 Pro"
+      release_year: 2026
+      specs:
+        cpu: "Intel Core Ultra 7 265"
+        ram_gb: 32
+        ram_type: "DDR5"
+        storage_gb: 1024
+        display: "27-inch QHD (2560x1440) IPS, Anti-glare"
+        ports: ["Thunderbolt 4 x2", "USB-A x4", "RJ-45"]
+        weight_kg: 6.90
+      price: 1599
+      in_stock: true
+      tags: ["бизнес", "корпоративный", "офис", "надежный"]
+
+  # ==================== МОНИТОРЫ ====================
+  monitors:
+    - id: "APL-STUDIO-DISPLAY"
+      brand: "Apple"
+      model: "Apple Studio Display (2026 Refresh)"
+      category: "Professional Display"
+      release_year: 2026
+      specs:
+        panel: "27-inch 5K Retina (5120x2880), IPS"
+        brightness_nits: 600
+        hdr: "P3 Wide Color"
+        refresh_rate_hz: 60
+        ports: ["Thunderbolt 3 (96W PD)", "USB-C x3"]
+        camera: "12MP Ultra Wide with Center Stage"
+        speakers: "Six-speaker system with Spatial Audio"
+        weight_kg: 6.30
+      price: 1599
+      in_stock: true
+      tags: ["5k", "для mac", "студия", "центр-стейдж"]
+
+    - id: "APL-PRO-DISPLAY-XDR2"
+      brand: "Apple"
+      model: "Apple Pro Display XDR 2 (32-inch)"
+      category: "Reference Display"
+      release_year: 2026
+      specs:
+        panel: "32-inch 6K Retina (6016x3384), XDR"
+        brightness_nits: 1600
+        hdr: "Extreme Dynamic Range, 1,000,000:1 contrast"
+        refresh_rate_hz: 120
+        ports: ["Thunderbolt 5"]
+        camera: null
+        speakers: null
+        weight_kg: 7.50
+      price: 5999
+      in_stock: true
+      tags: ["референсный", "6k", "xdr", "цветокоррекция", "hdr"]
+
+    - id: "DEL-U3224KB"
+      brand: "Dell"
+      model: "UltraSharp 32 6K Monitor (U3224KB)"
+      category: "Professional Monitor"
+      release_year: 2025
+      specs:
+        panel: "31.5-inch 6K (6144x3456) IPS Black"
+        brightness_nits: 500
+        hdr: "DisplayHDR 400, 99% DCI-P3"
+        refresh_rate_hz: 60
+        ports: ["Thunderbolt 4 (140W PD)", "HDMI 2.1 x2", "DP 2.1", "USB-C x4", "RJ-45 2.5GbE"]
+        weight_kg: 9.80
+      price: 2999
+      in_stock: true
+      tags: ["6k", "thunderbolt", "ips black", "для mac", "офис"]
+
+    - id: "SAMS-ODYSSEY-G9-26"
+      brand: "Samsung"
+      model: "Odyssey OLED G9 G95SC (2026)"
+      category: "Gaming Monitor"
+      release_year: 2026
+      specs:
+        panel: "49-inch DQHD (5120x1440) QD-OLED, 1800R"
+        brightness_nits: 250
+        hdr: "DisplayHDR True Black 400"
+        refresh_rate_hz: 240
+        response_time_ms: 0.03
+        ports: ["HDMI 2.1 x2", "DP 2.1", "USB-C (90W PD)"]
+        weight_kg: 12.40
+      price: 1799
+      in_stock: true
+      tags: ["ультраширокий", "qdoled", "240hz", "immersive", "киберспорт"]
+
+    - id: "LG-27GR95QE"
+      brand: "LG"
+      model: "UltraGear 27GR95QE-B"
+      category: "Gaming Monitor"
+      release_year: 2025
+      specs:
+        panel: "26.5-inch 1440p (2560x1440) OLED"
+        brightness_nits: 250
+        hdr: "DisplayHDR True Black 400"
+        refresh_rate_hz: 240
+        response_time_ms: 0.03
+        ports: ["HDMI 2.1 x2", "DP 1.4", "USB-C (90W PD)"]
+        weight_kg: 5.80
+      price: 899
+      in_stock: true
+      tags: ["oled", "240hz", "компактный игровой", "0.03ms"]
+
+    - id: "ASUS-PA32UCDM"
+      brand: "ASUS"
+      model: "ProArt PA32UCDM"
+      category: "Creator Monitor"
+      release_year: 2025
+      specs:
+        panel: "31.5-inch 4K (3840x2160) QD-OLED"
+        brightness_nits: 250
+        hdr: "DisplayHDR True Black 400, 99% DCI-P3, Delta E < 2"
+        refresh_rate_hz: 120
+        response_time_ms: 0.03
+        ports: ["HDMI 2.1 x2", "DP 1.4", "USB-C (90W PD)", "USB hub"]
+        weight_kg: 8.20
+      price: 2499
+      in_stock: true
+      tags: ["для креаторов", "4k", "qdoled", "калибровка", "цветокоррекция"]
+
+    - id: "BENQ-PD3225U"
+      brand: "BenQ"
+      model: "PD3225U (Designer Series)"
+      category: "Creator Monitor"
+      release_year: 2025
+      specs:
+        panel: "31.5-inch 4K (3840x2160) IPS, Thunderbolt"
+        brightness_nits: 600
+        hdr: "DisplayHDR 600, 99% DCI-P3, 100% Rec. 709"
+        refresh_rate_hz: 60
+        response_time_ms: 5
+        ports: ["Thunderbolt 4 (96W PD)", "HDMI 2.0 x2", "DP 1.4", "USB hub"]
+        weight_kg: 9.50
+      price: 1399
+      in_stock: true
+      tags: ["для дизайнеров", "thunderbolt", "mac-friendly", "калибровка"]
+
+    - id: "MSI-MEG-342C"
+      brand: "MSI"
+      model: "MEG 342C QD-OLED"
+      category: "Premium Gaming Monitor"
+      release_year: 2026
+      specs:
+        panel: "34-inch UWQHD (3440x1440) QD-OLED, 1800R"
+        brightness_nits: 250
+        hdr: "DisplayHDR True Black 400"
+        refresh_rate_hz: 175
+        response_time_ms: 0.03
+        ports: ["HDMI 2.1 x2", "DP 1.4", "USB-C (90W PD)"]
+        weight_kg: 7.80
+      price: 1199
+      in_stock: true
+      tags: ["ультраширокий", "qdoled", "изогнутый", "премиум"]

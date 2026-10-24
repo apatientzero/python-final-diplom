@@ -5,6 +5,11 @@ from django.conf import settings
 from .managers import UserManager
 
 
+class Currency(models.TextChoices):
+    RUB = "RUB", "Российский рубль"
+    USD = "USD", "Доллар США"
+
+
 class User(AbstractUser):
     """Покупатель или поставщик с авторизацией по email."""
 
@@ -55,7 +60,7 @@ class Shop(models.Model):
 class Category(models.Model):
     """Категория товаров, представленная у поставщиков."""
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     shops = models.ManyToManyField(
         Shop,
         related_name="categories",
@@ -76,6 +81,14 @@ class Product(models.Model):
         related_name="products",
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "category"],
+                name="unique_product_name_category",
+            ),
+        ]
+
     def __str__(self):
         return self.name
 
@@ -93,11 +106,16 @@ class ProductInfo(models.Model):
         on_delete=models.PROTECT,
         related_name="product_infos",
     )
-    external_id = models.PositiveBigIntegerField()
+    external_id = models.CharField(max_length=100)
     model = models.CharField(max_length=100, blank=True)
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     price_rrc = models.DecimalField(max_digits=12, decimal_places=2)
+    currency = models.CharField(
+        max_length=3,
+        choices=Currency.choices,
+        default=Currency.RUB,
+    )
 
     class Meta:
         constraints = [
@@ -233,6 +251,11 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     product_name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    currency = models.CharField(
+        max_length=3,
+        choices=Currency.choices,
+        default=Currency.RUB,
+    )
 
     class Meta:
         constraints = [
