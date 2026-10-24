@@ -169,3 +169,90 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.city}, {self.street}, д. {self.house}"
+
+
+class Order(models.Model):
+    """Корзина или оформленный заказ покупателя."""
+
+    class State(models.TextChoices):
+        BASKET = "basket", "Корзина"
+        NEW = "new", "Новый"
+        CONFIRMED = "confirmed", "Подтверждён"
+        ASSEMBLED = "assembled", "Собран"
+        SENT = "sent", "Отправлен"
+        DELIVERED = "delivered", "Доставлен"
+        CANCELED = "canceled", "Отменён"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="orders",
+    )
+    dt = models.DateTimeField(auto_now_add=True)
+    state = models.CharField(
+        max_length=15,
+        choices=State.choices,
+        default=State.BASKET,
+    )
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.SET_NULL,
+        related_name="orders",
+        null=True,
+        blank=True,
+    )
+    delivery_address = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ["-dt", "-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user"],
+                condition=models.Q(state="basket"),
+                name="unique_user_basket",
+            ),
+        ]
+
+    def __str__(self):
+        return f"Заказ №{self.pk}: {self.get_state_display()}"
+
+
+class OrderItem(models.Model):
+    """Позиция заказа с сохранёнными названием и ценой."""
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    product_info = models.ForeignKey(
+        ProductInfo,
+        on_delete=models.PROTECT,
+        related_name="order_items",
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    product_name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order", "product_info"],
+                name="unique_order_product_info",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(quantity__gte=1),
+                name="order_item_quantity_positive",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(price__gte=0),
+                name="order_item_price_nonnegative",
+            ),
+        ]
+
+    @property
+    def total_price(self):
+        return self.price * self.quantity
+
+    def __str__(self):
+        return f"{self.product_name} × {self.quantity}"
