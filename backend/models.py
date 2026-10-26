@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 
 from .managers import UserManager
+from django.utils import timezone
 
 
 class Currency(models.TextChoices):
@@ -279,3 +280,19 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_name} × {self.quantity}"
+
+
+class ConfirmEmailToken(models.Model):
+    """Хранит данные одноразового подтверждения email."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="email_confirmation",
+    )
+    email = models.EmailField()
+    token_hash = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Подтверждение email: {self.email}"

@@ -55,3 +55,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             type=User.Type.BUYER,
             is_active=False,
         )
+
+
+class ConfirmEmailSerializer(serializers.Serializer):
+    """Проверяет формат данных для подтверждения email."""
+
+    email = serializers.EmailField(max_length=254)
+    token = serializers.CharField(
+        max_length=128,
+        trim_whitespace=False,
+        write_only=True,
+    )
+
+    def validate_email(self, value):
+        return value.lower()

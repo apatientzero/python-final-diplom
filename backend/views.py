@@ -5,7 +5,16 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import RegisterSerializer
+from .serializers import ConfirmEmailSerializer, RegisterSerializer
+
+from smtplib import SMTPException
+
+from .services.email_confirmation import (
+    EmailConfirmationError,
+    confirm_email,
+    create_confirmation_token,
+    send_confirmation_email,
+)
 
 User = get_user_model()
 
@@ -26,7 +35,23 @@ class RegisterAccount(APIView):
 
         try:
             with transaction.atomic():
-                serializer.save()
+                user = serializer.save()
+                token = create_confirmation_token(user)
+                send_confirmation_email(user, token)
+
+        except (SMTPException, OSError):
+            return Response(
+                {
+                    "Status": False,
+                    "Errors": {
+                        "email": [
+                            "Не удалось отправить письмо. "
+                            "Попробуйте зарегистрироваться позже."
+                        ],
+                    },
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
         except IntegrityError:
             # Другой запрос мог зарегистрировать email после проверки.
             if User.objects.filter(
@@ -44,4 +69,32 @@ class RegisterAccount(APIView):
         return Response(
             {"Status": True},
             status=status.HTTP_201_CREATED,
+        )
+
+
+class ConfirmEmail(APIView):
+    """Подтверждение email и активация пользователя."""
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        serializer = ConfirmEmailSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"Status": False, "Errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            confirm_email(**serializer.validated_data)
+        except EmailConfirmationError as exc:
+            return Response(
+                {"Status": False, "Errors": {"token": [str(exc)]}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"Status": True},
+            status=status.HTTP_200_OK,
         )
