@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     ConfirmEmail,
     LoginAccount,
+    ProductDetail,
     ProductList,
     RegisterAccount,
 )
@@ -29,5 +30,10 @@ urlpatterns = [
         "products",
         ProductList.as_view(),
         name="product-list",
+    ),
+    path(
+        "products/<int:pk>",
+        ProductDetail.as_view(),
+        name="product-detail",
     ),
 ]

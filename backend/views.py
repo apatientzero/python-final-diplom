@@ -23,7 +23,7 @@ from .services.email_confirmation import (
 
 from rest_framework.authtoken.models import Token
 
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import ProductInfo
 from .pagination import CatalogPagination
@@ -156,4 +156,22 @@ class ProductList(ListAPIView):
             .select_related("product__category", "shop")
             .prefetch_related("product_parameters__parameter")
             .order_by("id")
+        )
+
+
+class ProductDetail(RetrieveAPIView):
+    """Подробная информация об одном предложении поставщика."""
+
+    permission_classes = [AllowAny]
+    serializer_class = ProductInfoSerializer
+
+    def get_queryset(self):
+        return (
+            ProductInfo.objects
+            .filter(
+                shop__state=True,
+                shop__user__is_active=True,
+            )
+            .select_related("product__category", "shop")
+            .prefetch_related("product_parameters__parameter")
         )
