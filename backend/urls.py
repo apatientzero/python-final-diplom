@@ -1,6 +1,5 @@
 from django.urls import path
-
-from .views import ConfirmEmail, RegisterAccount
+from .views import ConfirmEmail, LoginAccount, RegisterAccount
 
 app_name = "backend"
 
@@ -14,5 +13,10 @@ urlpatterns = [
         "user/register/confirm",
         ConfirmEmail.as_view(),
         name="user-register-confirm",
+    ),
+    path(
+        "user/login",
+        LoginAccount.as_view(),
+        name="user-login",
     ),
 ]

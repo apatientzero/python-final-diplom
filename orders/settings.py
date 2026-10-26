@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    "rest_framework.authtoken",
     'backend.apps.BackendConfig',
 ]
 
@@ -137,3 +138,9 @@ AUTH_USER_MODEL = "backend.User"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "Parviz Store <noreply@parviz-store.test>"
 EMAIL_TIMEOUT = 10
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}

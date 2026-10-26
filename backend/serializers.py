@@ -3,6 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from django.contrib.auth import authenticate
 
 User = get_user_model()
 
@@ -69,3 +70,32 @@ class ConfirmEmailSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         return value.lower()
+
+
+class LoginSerializer(serializers.Serializer):
+    """Проверяет email и пароль для входа."""
+
+    email = serializers.EmailField(max_length=254)
+    password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        max_length=128,
+    )
+
+    def validate_email(self, value):
+        return value.lower()
+
+    def validate(self, attrs):
+        user = authenticate(
+            request=self.context.get("request"),
+            email=attrs["email"],
+            password=attrs["password"],
+        )
+
+        if user is None or not user.is_active:
+            raise serializers.ValidationError(
+                "Неверный email или пароль, либо аккаунт не активирован."
+            )
+
+        attrs["user"] = user
+        return attrs

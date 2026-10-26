@@ -5,7 +5,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import ConfirmEmailSerializer, RegisterSerializer
+from .serializers import (
+    ConfirmEmailSerializer,
+    LoginSerializer,
+    RegisterSerializer,
+)
 
 from smtplib import SMTPException
 
@@ -15,6 +19,8 @@ from .services.email_confirmation import (
     create_confirmation_token,
     send_confirmation_email,
 )
+
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -96,5 +102,32 @@ class ConfirmEmail(APIView):
 
         return Response(
             {"Status": True},
+            status=status.HTTP_200_OK,
+        )
+
+
+class LoginAccount(APIView):
+    """Выдаёт API-токен после проверки email и пароля."""
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        serializer = LoginSerializer(
+            data=request.data,
+            context={"request": request},
+        )
+
+        if not serializer.is_valid():
+            return Response(
+                {"Status": False, "Errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response(
+            {"Status": True, "Token": token.key},
             status=status.HTTP_200_OK,
         )
