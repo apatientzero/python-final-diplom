@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
+from .models import ProductInfo, ProductParameter
 
 User = get_user_model()
 
@@ -99,3 +100,63 @@ class LoginSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class ProductParameterSerializer(serializers.ModelSerializer):
+    """Название и значение характеристики товара."""
+
+    parameter = serializers.CharField(
+        source="parameter.name",
+        read_only=True,
+    )
+
+    class Meta:
+        model = ProductParameter
+        fields = ["parameter", "value"]
+        read_only_fields = fields
+
+
+class ProductInfoSerializer(serializers.ModelSerializer):
+    """Предложение поставщика с ценой, остатком и характеристиками."""
+
+    name = serializers.CharField(
+        source="product.name",
+        read_only=True,
+    )
+    category = serializers.IntegerField(
+        source="product.category_id",
+        read_only=True,
+    )
+    category_name = serializers.CharField(
+        source="product.category.name",
+        read_only=True,
+    )
+    shop_name = serializers.CharField(
+        source="shop.name",
+        read_only=True,
+    )
+    parameters = ProductParameterSerializer(
+        source="product_parameters",
+        many=True,
+        read_only=True,
+    )
+
+    class Meta:
+        model = ProductInfo
+        fields = [
+            "id",
+            "product",
+            "name",
+            "category",
+            "category_name",
+            "shop",
+            "shop_name",
+            "external_id",
+            "model",
+            "quantity",
+            "price",
+            "price_rrc",
+            "currency",
+            "parameters",
+        ]
+        read_only_fields = fields

@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from .serializers import (
     ConfirmEmailSerializer,
     LoginSerializer,
+    ProductInfoSerializer,
     RegisterSerializer,
 )
 
@@ -21,6 +22,11 @@ from .services.email_confirmation import (
 )
 
 from rest_framework.authtoken.models import Token
+
+from rest_framework.generics import ListAPIView
+
+from .models import ProductInfo
+from .pagination import CatalogPagination
 
 User = get_user_model()
 
@@ -130,4 +136,24 @@ class LoginAccount(APIView):
         return Response(
             {"Status": True, "Token": token.key},
             status=status.HTTP_200_OK,
+        )
+
+
+class ProductList(ListAPIView):
+    """Каталог предложений поставщиков, принимающих заказы."""
+
+    permission_classes = [AllowAny]
+    serializer_class = ProductInfoSerializer
+    pagination_class = CatalogPagination
+
+    def get_queryset(self):
+        return (
+            ProductInfo.objects
+            .filter(
+                shop__state=True,
+                shop__user__is_active=True,
+            )
+            .select_related("product__category", "shop")
+            .prefetch_related("product_parameters__parameter")
+            .order_by("id")
         )
