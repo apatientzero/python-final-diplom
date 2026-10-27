@@ -32,6 +32,7 @@ from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
     RetrieveAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
 
 from .models import Contact, Order, ProductInfo
@@ -323,3 +324,14 @@ class ContactList(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class ContactDetail(RetrieveUpdateDestroyAPIView):
+    """Просмотр, редактирование и удаление своего адреса."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+    serializer_class = ContactSerializer
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return Contact.objects.filter(user=self.request.user)
