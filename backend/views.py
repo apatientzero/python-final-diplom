@@ -25,14 +25,12 @@ from .services.email_confirmation import (
 )
 
 from rest_framework.authtoken.models import Token
-
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-
-from .models import ProductInfo
+from .models import Order, ProductInfo
 from .pagination import CatalogPagination
-
 from .permissions import IsBuyer
 from .services.basket import add_to_basket
+from decimal import Decimal
 
 User = get_user_model()
 
@@ -209,6 +207,36 @@ class BasketView(APIView):
     """Добавление предложений в корзину текущего покупателя."""
 
     permission_classes = [IsAuthenticated, IsBuyer]
+
+    def get(self, request):
+        basket = Order.objects.filter(
+            user=request.user,
+            state=Order.State.BASKET,
+        ).first()
+
+        items = []
+        if basket is not None:
+            items = list(basket.items.order_by("id"))
+
+        totals = {}
+        for item in items:
+            totals[item.currency] = (
+                totals.get(item.currency, Decimal("0.00"))
+                + item.total_price
+            )
+
+        return Response(
+            {
+                "Status": True,
+                "Basket": basket.pk if basket is not None else None,
+                "Items": BasketItemSerializer(items, many=True).data,
+                "Totals": {
+                    currency: f"{amount:.2f}"
+                    for currency, amount in sorted(totals.items())
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request):
         serializer = BasketItemInputSerializer(data=request.data)
