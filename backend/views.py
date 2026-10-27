@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from .serializers import (
     BasketItemInputSerializer,
+    BasketItemQuantitySerializer,
     BasketItemSerializer,
     CatalogFilterSerializer,
     ConfirmEmailSerializer,
@@ -29,7 +30,13 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .models import Order, ProductInfo
 from .pagination import CatalogPagination
 from .permissions import IsBuyer
-from .services.basket import add_to_basket
+
+from .services.basket import (
+    add_to_basket,
+    delete_basket_item,
+    set_basket_item_quantity,
+)
+
 from decimal import Decimal
 
 User = get_user_model()
@@ -261,3 +268,35 @@ class BasketView(APIView):
             },
             status=response_status,
         )
+
+
+class BasketItemDetailView(APIView):
+    """Изменение количества и удаление позиции своей корзины."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+
+    def patch(self, request, pk):
+        serializer = BasketItemQuantitySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        item = set_basket_item_quantity(
+            user=request.user,
+            item_id=pk,
+            quantity=serializer.validated_data["quantity"],
+        )
+
+        return Response(
+            {
+                "Status": True,
+                "Item": BasketItemSerializer(item).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, pk):
+        delete_basket_item(
+            user=request.user,
+            item_id=pk,
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

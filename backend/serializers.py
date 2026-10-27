@@ -217,3 +217,12 @@ class BasketItemSerializer(serializers.ModelSerializer):
             "total_price",
         ]
         read_only_fields = fields
+
+
+class BasketItemQuantitySerializer(serializers.Serializer):
+    """Проверяет новое количество позиции корзины."""
+
+    quantity = serializers.IntegerField(
+        min_value=1,
+        max_value=2**31 - 1,
+    )
