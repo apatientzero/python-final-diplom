@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
-from .models import OrderItem, ProductInfo, ProductParameter
+from .models import Contact, OrderItem, ProductInfo, ProductParameter
 
 User = get_user_model()
 
@@ -226,3 +226,33 @@ class BasketItemQuantitySerializer(serializers.Serializer):
         min_value=1,
         max_value=2**31 - 1,
     )
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    """Адрес доставки и контактный телефон покупателя."""
+
+    phone = serializers.RegexField(
+        regex=r"\A\+?[0-9]{7,15}\Z",
+        max_length=16,
+        error_messages={
+            "invalid": (
+                "Укажите от 7 до 15 цифр. "
+                "В начале допускается знак +. "
+                "Пробелы, скобки и дефисы не используются."
+            ),
+        },
+    )
+
+    class Meta:
+        model = Contact
+        fields = [
+            "id",
+            "city",
+            "street",
+            "house",
+            "structure",
+            "building",
+            "apartment",
+            "phone",
+        ]
+        read_only_fields = ["id"]

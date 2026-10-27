@@ -11,6 +11,7 @@ from .serializers import (
     BasketItemSerializer,
     CatalogFilterSerializer,
     ConfirmEmailSerializer,
+    ContactSerializer,
     LoginSerializer,
     ProductInfoSerializer,
     RegisterSerializer,
@@ -26,8 +27,14 @@ from .services.email_confirmation import (
 )
 
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .models import Order, ProductInfo
+
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveAPIView,
+)
+
+from .models import Contact, Order, ProductInfo
 from .pagination import CatalogPagination
 from .permissions import IsBuyer
 
@@ -300,3 +307,19 @@ class BasketItemDetailView(APIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ContactList(ListCreateAPIView):
+    """Просмотр и создание адресов текущего покупателя."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+    serializer_class = ContactSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return Contact.objects.filter(
+            user=self.request.user,
+        ).order_by("id")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

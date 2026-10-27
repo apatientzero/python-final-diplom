@@ -4,6 +4,7 @@ from .views import (
     BasketItemDetailView,
     BasketView,
     ConfirmEmail,
+    ContactList,
     LoginAccount,
     ProductDetail,
     ProductList,
@@ -47,5 +48,10 @@ urlpatterns = [
         "basket/items/<int:pk>",
         BasketItemDetailView.as_view(),
         name="basket-item-detail",
+    ),
+    path(
+        "user/contact",
+        ContactList.as_view(),
+        name="contact-list",
     ),
 ]
