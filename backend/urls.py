@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    BasketView,
     ConfirmEmail,
     LoginAccount,
     ProductDetail,
@@ -35,5 +36,10 @@ urlpatterns = [
         "products/<int:pk>",
         ProductDetail.as_view(),
         name="product-detail",
+    ),
+    path(
+        "basket",
+        BasketView.as_view(),
+        name="basket",
     ),
 ]

@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
-from .models import ProductInfo, ProductParameter
+from .models import OrderItem, ProductInfo, ProductParameter
 
 User = get_user_model()
 
@@ -180,3 +180,40 @@ class CatalogFilterSerializer(serializers.Serializer):
         allow_blank=True,
         max_length=255,
     )
+
+
+class BasketItemInputSerializer(serializers.Serializer):
+    """Проверяет данные для добавления предложения в корзину."""
+
+    product_info = serializers.IntegerField(
+        min_value=1,
+        max_value=2**63 - 1,
+    )
+    quantity = serializers.IntegerField(
+        min_value=1,
+        max_value=2**31 - 1,
+    )
+
+
+class BasketItemSerializer(serializers.ModelSerializer):
+    """Позиция корзины с сохранённой ценой и стоимостью."""
+
+    total_price = serializers.DecimalField(
+        max_digits=22,
+        decimal_places=2,
+        read_only=True,
+    )
+
+    class Meta:
+        model = OrderItem
+        fields = [
+            "id",
+            "order",
+            "product_info",
+            "product_name",
+            "quantity",
+            "price",
+            "currency",
+            "total_price",
+        ]
+        read_only_fields = fields

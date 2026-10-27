@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import (
+    BasketItemInputSerializer,
+    BasketItemSerializer,
     CatalogFilterSerializer,
     ConfirmEmailSerializer,
     LoginSerializer,
@@ -28,6 +30,9 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import ProductInfo
 from .pagination import CatalogPagination
+
+from .permissions import IsBuyer
+from .services.basket import add_to_basket
 
 User = get_user_model()
 
@@ -197,4 +202,34 @@ class ProductDetail(RetrieveAPIView):
             )
             .select_related("product__category", "shop")
             .prefetch_related("product_parameters__parameter")
+        )
+
+
+class BasketView(APIView):
+    """Добавление предложений в корзину текущего покупателя."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+
+    def post(self, request):
+        serializer = BasketItemInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        item, created = add_to_basket(
+            user=request.user,
+            **serializer.validated_data,
+        )
+
+        response_status = (
+            status.HTTP_201_CREATED
+            if created
+            else status.HTTP_200_OK
+        )
+
+        return Response(
+            {
+                "Status": True,
+                "Created": created,
+                "Item": BasketItemSerializer(item).data,
+            },
+            status=response_status,
         )
