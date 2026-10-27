@@ -13,6 +13,7 @@ from .serializers import (
     ConfirmEmailSerializer,
     ContactSerializer,
     LoginSerializer,
+    OrderCheckoutSerializer,
     ProductInfoSerializer,
     RegisterSerializer,
 )
@@ -46,6 +47,7 @@ from .services.basket import (
 )
 
 from decimal import Decimal
+from .services.orders import checkout_order
 
 User = get_user_model()
 
@@ -335,3 +337,28 @@ class ContactDetail(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Contact.objects.filter(user=self.request.user)
+
+
+class OrderView(APIView):
+    """Оформление заказа из корзины текущего покупателя."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+
+    def post(self, request):
+        serializer = OrderCheckoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        order = checkout_order(
+            user=request.user,
+            order_id=serializer.validated_data["order"],
+            contact_id=serializer.validated_data["contact"],
+        )
+
+        return Response(
+            {
+                "Status": True,
+                "Order": order.pk,
+                "State": order.state,
+            },
+            status=status.HTTP_200_OK,
+        )

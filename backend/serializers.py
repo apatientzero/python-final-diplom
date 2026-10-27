@@ -256,3 +256,16 @@ class ContactSerializer(serializers.ModelSerializer):
             "phone",
         ]
         read_only_fields = ["id"]
+
+
+class OrderCheckoutSerializer(serializers.Serializer):
+    """Проверяет ID корзины и адреса для оформления заказа."""
+
+    order = serializers.IntegerField(
+        min_value=1,
+        max_value=2**63 - 1,
+    )
+    contact = serializers.IntegerField(
+        min_value=1,
+        max_value=2**63 - 1,
+    )
