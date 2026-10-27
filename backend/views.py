@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import (
+    CatalogFilterSerializer,
     ConfirmEmailSerializer,
     LoginSerializer,
     ProductInfoSerializer,
@@ -140,14 +141,20 @@ class LoginAccount(APIView):
 
 
 class ProductList(ListAPIView):
-    """Каталог предложений поставщиков, принимающих заказы."""
+    """Каталог с фильтрацией по магазину, категории и названию."""
 
     permission_classes = [AllowAny]
     serializer_class = ProductInfoSerializer
     pagination_class = CatalogPagination
 
     def get_queryset(self):
-        return (
+        filters = CatalogFilterSerializer(
+            data=self.request.query_params,
+        )
+        filters.is_valid(raise_exception=True)
+        params = filters.validated_data
+
+        queryset = (
             ProductInfo.objects
             .filter(
                 shop__state=True,
@@ -157,6 +164,22 @@ class ProductList(ListAPIView):
             .prefetch_related("product_parameters__parameter")
             .order_by("id")
         )
+
+        if "shop" in params:
+            queryset = queryset.filter(shop_id=params["shop"])
+
+        if "category" in params:
+            queryset = queryset.filter(
+                product__category_id=params["category"],
+            )
+
+        search = params.get("search", "")
+        if search:
+            queryset = queryset.filter(
+                product__name__icontains=search,
+            )
+
+        return queryset
 
 
 class ProductDetail(RetrieveAPIView):

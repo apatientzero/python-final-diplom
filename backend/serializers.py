@@ -160,3 +160,23 @@ class ProductInfoSerializer(serializers.ModelSerializer):
             "parameters",
         ]
         read_only_fields = fields
+
+
+class CatalogFilterSerializer(serializers.Serializer):
+    """Проверяет параметры фильтрации каталога."""
+
+    shop = serializers.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=2**63 - 1,
+    )
+    category = serializers.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=2**63 - 1,
+    )
+    search = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=255,
+    )
