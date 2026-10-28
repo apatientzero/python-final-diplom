@@ -384,3 +384,15 @@ class PasswordResetConfirmSerializer(PasswordTokenSerializer):
         trim_whitespace=False,
         max_length=64,
     )
+
+
+class OrderStateSerializer(serializers.Serializer):
+    """Проверяет целевой статус оформленного заказа."""
+
+    state = serializers.ChoiceField(
+        choices=[
+            (value, label)
+            for value, label in Order.State.choices
+            if value != Order.State.BASKET
+        ],
+    )

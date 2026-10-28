@@ -22,6 +22,8 @@ from .password_reset_views import (
     PasswordResetRequestView,
 )
 
+from .admin_views import AdminOrderStateView
+
 app_name = "backend"
 
 urlpatterns = [
@@ -104,5 +106,10 @@ urlpatterns = [
         "user/password_reset/confirm",
         PasswordResetConfirmView.as_view(),
         name="password-reset-confirm",
+    ),
+    path(
+        "admin/orders/<int:pk>/state",
+        AdminOrderStateView.as_view(),
+        name="admin-order-state",
     ),
 ]
