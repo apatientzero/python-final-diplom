@@ -17,6 +17,7 @@ from .serializers import (
     OrderSerializer,
     ProductInfoSerializer,
     RegisterSerializer,
+    SupplierStateSerializer,
 )
 
 from smtplib import SMTPException
@@ -37,9 +38,9 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
 )
 
-from .models import Contact, Order, ProductInfo
+from .models import Contact, Order, ProductInfo, Shop
 from .pagination import CatalogPagination, OrderPagination
-from .permissions import IsBuyer
+from .permissions import IsBuyer, IsSupplier
 
 from .services.basket import (
     add_to_basket,
@@ -49,6 +50,7 @@ from .services.basket import (
 
 from decimal import Decimal
 from .services.orders import checkout_order
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -393,3 +395,43 @@ class OrderDetail(RetrieveAPIView):
             .exclude(state=Order.State.BASKET)
             .prefetch_related("items")
         )
+
+
+class SupplierStateView(APIView):
+    """Просмотр и изменение приёма заказов своим магазином."""
+
+    permission_classes = [IsAuthenticated, IsSupplier]
+
+    def get(self, request):
+        shop = get_object_or_404(Shop, user=request.user)
+
+        return Response({
+            "Status": True,
+            "Shop": shop.pk,
+            "State": shop.state,
+        })
+
+    def post(self, request):
+        serializer = SupplierStateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            supplier = get_object_or_404(
+                User.objects.select_for_update(),
+                pk=request.user.pk,
+                type=User.Type.SHOP,
+                is_active=True,
+            )
+            shop = get_object_or_404(
+                Shop.objects.select_for_update(),
+                user=supplier,
+            )
+
+            shop.state = serializer.validated_data["state"]
+            shop.save(update_fields=["state"])
+
+        return Response({
+            "Status": True,
+            "Shop": shop.pk,
+            "State": shop.state,
+        })

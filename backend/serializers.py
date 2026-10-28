@@ -304,3 +304,9 @@ class OrderSerializer(serializers.ModelSerializer):
             currency: f"{amount:.2f}"
             for currency, amount in sorted(totals.items())
         }
+
+
+class SupplierStateSerializer(serializers.Serializer):
+    """Проверяет флаг приёма заказов поставщиком."""
+
+    state = serializers.BooleanField()

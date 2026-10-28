@@ -12,6 +12,7 @@ from .views import (
     ProductDetail,
     ProductList,
     RegisterAccount,
+    SupplierStateView,
 )
 
 app_name = "backend"
@@ -71,5 +72,10 @@ urlpatterns = [
         "order/<int:pk>",
         OrderDetail.as_view(),
         name="order-detail",
+    ),
+    path(
+        "partner/state",
+        SupplierStateView.as_view(),
+        name="supplier-state",
     ),
 ]

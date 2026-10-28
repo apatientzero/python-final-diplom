@@ -17,3 +17,18 @@ class IsBuyer(BasePermission):
             and user.is_active
             and user.type == User.Type.BUYER
         )
+
+
+class IsSupplier(BasePermission):
+    """Разрешает доступ только активному поставщику."""
+
+    message = "Это действие доступно только поставщикам."
+
+    def has_permission(self, request, view):
+        user = request.user
+
+        return (
+            user.is_authenticated
+            and user.is_active
+            and user.type == User.Type.SHOP
+        )
