@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     "rest_framework.authtoken",
+    "django_rest_passwordreset",
     'backend.apps.BackendConfig',
 ]
 
@@ -149,3 +150,9 @@ ORDER_ADMIN_EMAIL = os.getenv(
     "ORDER_ADMIN_EMAIL",
     "admin@parviz-store.test",
 )
+
+# Токен восстановления пароля действует один час.
+DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME = 1
+
+# Одинаковый статус и тело ответа для существующего и неизвестного email.
+DJANGO_REST_PASSWORDRESET_NO_INFORMATION_LEAKAGE = True

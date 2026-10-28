@@ -6,6 +6,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
 from .models import Contact, Order, OrderItem, ProductInfo, ProductParameter
 from decimal import Decimal
+from django_rest_passwordreset.serializers import PasswordTokenSerializer
 
 User = get_user_model()
 
@@ -368,3 +369,18 @@ class SupplierOrderSerializer(serializers.ModelSerializer):
             currency: f"{amount:.2f}"
             for currency, amount in sorted(totals.items())
         }
+
+
+class PasswordResetConfirmSerializer(PasswordTokenSerializer):
+    """Сохраняет пробелы в пароле и ограничивает размеры полей."""
+
+    password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        max_length=128,
+    )
+    token = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+        max_length=64,
+    )

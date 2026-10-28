@@ -17,6 +17,11 @@ from .views import (
     SupplierUpdateView,
 )
 
+from .password_reset_views import (
+    PasswordResetConfirmView,
+    PasswordResetRequestView,
+)
+
 app_name = "backend"
 
 urlpatterns = [
@@ -89,5 +94,15 @@ urlpatterns = [
         "partner/orders",
         SupplierOrdersView.as_view(),
         name="supplier-orders",
+    ),
+    path(
+        "user/password_reset",
+        PasswordResetRequestView.as_view(),
+        name="password-reset-request",
+    ),
+    path(
+        "user/password_reset/confirm",
+        PasswordResetConfirmView.as_view(),
+        name="password-reset-confirm",
     ),
 ]
