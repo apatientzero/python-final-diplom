@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
-from .models import Contact, OrderItem, ProductInfo, ProductParameter
+from .models import Contact, Order, OrderItem, ProductInfo, ProductParameter
+from decimal import Decimal
 
 User = get_user_model()
 
@@ -269,3 +270,37 @@ class OrderCheckoutSerializer(serializers.Serializer):
         min_value=1,
         max_value=2**63 - 1,
     )
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    """Заказ с позициями, копией адреса и итогами по валютам."""
+
+    items = BasketItemSerializer(many=True, read_only=True)
+    totals = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "dt",
+            "state",
+            "contact",
+            "delivery_address",
+            "items",
+            "totals",
+        ]
+        read_only_fields = fields
+
+    def get_totals(self, obj):
+        totals = {}
+
+        for item in obj.items.all():
+            totals[item.currency] = (
+                totals.get(item.currency, Decimal("0.00"))
+                + item.total_price
+            )
+
+        return {
+            currency: f"{amount:.2f}"
+            for currency, amount in sorted(totals.items())
+        }

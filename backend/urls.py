@@ -7,6 +7,7 @@ from .views import (
     ContactDetail,
     ContactList,
     LoginAccount,
+    OrderDetail,
     OrderView,
     ProductDetail,
     ProductList,
@@ -65,5 +66,10 @@ urlpatterns = [
         "order",
         OrderView.as_view(),
         name="order-list",
+    ),
+    path(
+        "order/<int:pk>",
+        OrderDetail.as_view(),
+        name="order-detail",
     ),
 ]

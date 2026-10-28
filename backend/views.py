@@ -14,6 +14,7 @@ from .serializers import (
     ContactSerializer,
     LoginSerializer,
     OrderCheckoutSerializer,
+    OrderSerializer,
     ProductInfoSerializer,
     RegisterSerializer,
 )
@@ -37,7 +38,7 @@ from rest_framework.generics import (
 )
 
 from .models import Contact, Order, ProductInfo
-from .pagination import CatalogPagination
+from .pagination import CatalogPagination, OrderPagination
 from .permissions import IsBuyer
 
 from .services.basket import (
@@ -344,6 +345,21 @@ class OrderView(APIView):
 
     permission_classes = [IsAuthenticated, IsBuyer]
 
+    def get(self, request):
+        orders = (
+            Order.objects
+            .filter(user=request.user)
+            .exclude(state=Order.State.BASKET)
+            .prefetch_related("items")
+            .order_by("-dt", "-id")
+        )
+
+        paginator = OrderPagination()
+        page = paginator.paginate_queryset(orders, request, view=self)
+
+        serializer = OrderSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
     def post(self, request):
         serializer = OrderCheckoutSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -361,4 +377,19 @@ class OrderView(APIView):
                 "State": order.state,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class OrderDetail(RetrieveAPIView):
+    """Просмотр своего оформленного заказа."""
+
+    permission_classes = [IsAuthenticated, IsBuyer]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return (
+            Order.objects
+            .filter(user=self.request.user)
+            .exclude(state=Order.State.BASKET)
+            .prefetch_related("items")
         )
