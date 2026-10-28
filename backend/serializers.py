@@ -310,3 +310,29 @@ class SupplierStateSerializer(serializers.Serializer):
     """Проверяет флаг приёма заказов поставщиком."""
 
     state = serializers.BooleanField()
+
+
+class SupplierImportSerializer(serializers.Serializer):
+    """Проверяет файл прайса и параметры импорта."""
+
+    file = serializers.FileField(
+        max_length=255,
+        allow_empty_file=False,
+    )
+    shop_name = serializers.CharField(
+        required=False,
+        max_length=100,
+    )
+    demo_quantity = serializers.IntegerField(
+        default=1,
+        min_value=0,
+        max_value=2**31 - 1,
+    )
+    replace = serializers.BooleanField(default=False)
+
+    def validate_file(self, value):
+        if value.size > 2 * 1024 * 1024:
+            raise serializers.ValidationError(
+                "Размер файла не должен превышать 2 МиБ."
+            )
+        return value

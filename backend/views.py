@@ -17,6 +17,7 @@ from .serializers import (
     OrderSerializer,
     ProductInfoSerializer,
     RegisterSerializer,
+    SupplierImportSerializer,
     SupplierStateSerializer,
 )
 
@@ -51,6 +52,9 @@ from .services.basket import (
 from decimal import Decimal
 from .services.orders import checkout_order
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import FormParser, MultiPartParser
+from .services.importer import PriceImportError, import_price
 
 User = get_user_model()
 
@@ -435,3 +439,36 @@ class SupplierStateView(APIView):
             "Shop": shop.pk,
             "State": shop.state,
         })
+
+
+class SupplierUpdateView(APIView):
+    """Загрузка YAML-прайса текущего поставщика."""
+
+    permission_classes = [IsAuthenticated, IsSupplier]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        serializer = SupplierImportSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        params = serializer.validated_data
+
+        try:
+            result = import_price(
+                params["file"].read(),
+                supplier=request.user,
+                shop_name=params.get("shop_name"),
+                demo_quantity=params["demo_quantity"],
+                replace=params["replace"],
+            )
+        except PriceImportError as exc:
+            raise ValidationError({
+                "file": [str(exc)],
+            }) from exc
+
+        return Response(
+            {
+                "Status": True,
+                "Import": result,
+            },
+            status=status.HTTP_200_OK,
+        )
