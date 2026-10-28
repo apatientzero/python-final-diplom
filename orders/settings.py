@@ -144,3 +144,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
 }
+
+ORDER_ADMIN_EMAIL = os.getenv(
+    "ORDER_ADMIN_EMAIL",
+    "admin@parviz-store.test",
+)

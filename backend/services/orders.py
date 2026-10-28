@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from backend.models import Contact, Order, OrderItem, ProductInfo
+from .order_notifications import send_order_email
 
 User = get_user_model()
 
@@ -120,4 +121,16 @@ def checkout_order(*, user, order_id, contact_id):
         update_fields=["contact", "delivery_address", "state"],
     )
 
+    def notify_customer():
+        send_order_email(order_id)
+
+    def notify_admin():
+        send_order_email(order_id, to_admin=True)
+
+    transaction.on_commit(notify_customer, robust=True)
+    transaction.on_commit(notify_admin, robust=True)
+
     return order
+
+
+
