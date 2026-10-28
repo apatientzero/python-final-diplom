@@ -336,3 +336,35 @@ class SupplierImportSerializer(serializers.Serializer):
                 "Размер файла не должен превышать 2 МиБ."
             )
         return value
+
+
+class SupplierOrderSerializer(serializers.ModelSerializer):
+    """Заказ с позициями и суммами только текущего поставщика."""
+
+    items = BasketItemSerializer(
+        source="supplier_items",
+        many=True,
+        read_only=True,
+    )
+    totals = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = [
+            "id", "dt", "state", "delivery_address", "items", "totals",
+        ]
+        read_only_fields = fields
+
+    def get_totals(self, obj):
+        totals = {}
+
+        for item in obj.supplier_items:
+            totals[item.currency] = (
+                totals.get(item.currency, Decimal("0.00"))
+                + item.total_price
+            )
+
+        return {
+            currency: f"{amount:.2f}"
+            for currency, amount in sorted(totals.items())
+        }

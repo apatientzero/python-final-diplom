@@ -12,6 +12,7 @@ from .views import (
     ProductDetail,
     ProductList,
     RegisterAccount,
+    SupplierOrdersView,
     SupplierStateView,
     SupplierUpdateView,
 )
@@ -83,5 +84,10 @@ urlpatterns = [
         "partner/update",
         SupplierUpdateView.as_view(),
         name="supplier-update",
+    ),
+    path(
+        "partner/orders",
+        SupplierOrdersView.as_view(),
+        name="supplier-orders",
     ),
 ]

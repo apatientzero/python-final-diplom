@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
+from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ from .serializers import (
     ProductInfoSerializer,
     RegisterSerializer,
     SupplierImportSerializer,
+    SupplierOrderSerializer,
     SupplierStateSerializer,
 )
 
@@ -39,7 +41,7 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
 )
 
-from .models import Contact, Order, ProductInfo, Shop
+from .models import Contact, Order, OrderItem, ProductInfo, Shop
 from .pagination import CatalogPagination, OrderPagination
 from .permissions import IsBuyer, IsSupplier
 
@@ -471,4 +473,34 @@ class SupplierUpdateView(APIView):
                 "Import": result,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class SupplierOrdersView(ListAPIView):
+    """Оформленные заказы с товарами текущего поставщика."""
+
+    permission_classes = [IsAuthenticated, IsSupplier]
+    serializer_class = SupplierOrderSerializer
+    pagination_class = OrderPagination
+
+    def get_queryset(self):
+        shop = get_object_or_404(Shop, user=self.request.user)
+
+        supplier_items = OrderItem.objects.filter(
+            product_info__shop=shop,
+        ).order_by("id")
+
+        return (
+            Order.objects
+            .filter(items__product_info__shop=shop)
+            .exclude(state=Order.State.BASKET)
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "items",
+                    queryset=supplier_items,
+                    to_attr="supplier_items",
+                ),
+            )
+            .order_by("-dt", "-id")
         )
