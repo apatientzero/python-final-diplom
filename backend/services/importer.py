@@ -1,13 +1,10 @@
 """Чтение двух форматов прайса и атомарное обновление каталога поставщика."""
-
 import json
 from decimal import Decimal, InvalidOperation
-
 import yaml
 from django.core.exceptions import ValidationError
 from django.core.validators import DecimalValidator
 from django.db import transaction
-
 from backend.models import (
     Category,
     Currency,
