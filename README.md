@@ -15,9 +15,9 @@
 - Подтверждение заказа покупателю и текстовая накладная администратору.
 - 40 автоматических тестов импорта, аккаунтов и заказов.
 
-Инструкция рассчитана на локальный запуск. Сейчас письма выводятся в терминал
-с сервером. Для доставки на реальные адреса требуется настройка SMTP
-в `orders/settings.py`.
+Инструкция рассчитана на локальный запуск. По умолчанию письма выводятся
+в терминал с сервером. Для доставки на реальные адреса настройте SMTP
+через `.env`, как описано в разделе «Почта».
 
 ## Технологии
 
@@ -156,6 +156,41 @@ python manage.py test backend --settings=orders.test_settings -v 2
 python manage.py test backend.test_catalog_import --settings=orders.catalog_test_settings
 ```
 
+## Почта
+
+Настройки отправки читаются из `.env`. Для консольного режима используйте
+`EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`.
+Для отправки через Gmail заполните:
+
+```dotenv
+EMAIL_BACKEND=backend.email_backend.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=465
+EMAIL_HOST_USER=your_account@gmail.com
+EMAIL_HOST_PASSWORD='your-app-password'
+EMAIL_USE_TLS=false
+EMAIL_USE_SSL=true
+EMAIL_TIMEOUT=30
+DEFAULT_FROM_EMAIL='Parviz Store <your_account@gmail.com>'
+ORDER_ADMIN_EMAIL=your_account@gmail.com
+```
+
+Замените адреса и пароль своими значениями в `.env`. Для Gmail требуется
+пароль приложения; его создание доступно при включённой двухэтапной
+аутентификации. [Инструкция Google](https://support.google.com/accounts/answer/185833?hl=ru).
+Для другого SMTP-сервиса укажите его параметры. `EMAIL_USE_TLS` и
+`EMAIL_USE_SSL` принимают `true`/`false`; одновременно включать их нельзя.
+После изменения `.env` перезапустите сервер.
+
+Для проверки отправьте письмо на собственный реальный адрес:
+
+```bash
+python manage.py sendtestemail your_account@gmail.com
+```
+
+Замените адрес в команде своим. Проверьте получение письма, включая папку
+«Спам». Автоматические тесты с `orders.test_settings` используют почту в памяти.
+
 ## API
 
 Базовый адрес: `http://127.0.0.1:8000/api/v1`.
@@ -190,8 +225,10 @@ python manage.py test backend.test_catalog_import --settings=orders.catalog_test
 
 ## Пример работы покупателя
 
-Откройте второй терминал. Примеры используют учебный email `buyer@example.test`.
-Токены подтверждения и восстановления берутся из писем в терминале с сервером.
+Откройте второй терминал. В консольном режиме примеры используют учебный email
+`buyer@example.test`; токены берутся из писем в терминале с сервером.
+Для SMTP замените учебный email своим реальным адресом во всех запросах
+регистрации, подтверждения, входа и восстановления и откройте полученные письма.
 Значения переменных с токенами и ID заменяйте в терминале данными из ответов API.
 
 ### Регистрация, подтверждение и вход
